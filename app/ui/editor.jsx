@@ -7,13 +7,15 @@ const editableArea = {
   border: 0,
   outline: 'none',
   background: '#1B2B34',
-  color: '#CDD3DE'
+  color: '#CDD3DE',
+  padding: '1.5em',
 };
 
 
 const previewArea = {
   flex: '1 0 200px',
-  background: '#EEEEEE'
+  background: '#EEEEEE',
+  padding: '1.5em',
 };
 
 
