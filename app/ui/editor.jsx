@@ -9,6 +9,8 @@ const editableArea = {
   background: '#1B2B34',
   color: '#CDD3DE',
   padding: '1.5em',
+  fontFamily: 'monospace',
+  fontSize: '1.2em'
 };
 
 
