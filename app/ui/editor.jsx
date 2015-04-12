@@ -18,6 +18,7 @@ const previewArea = {
   flex: '1 0 200px',
   background: '#EEEEEE',
   padding: '1.5em',
+  overflow: 'scroll'
 };
 
 
