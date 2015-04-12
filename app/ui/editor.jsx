@@ -26,12 +26,19 @@ const wrapper = {
 };
 
 
+marked.setOptions({
+  highlight: function (code) {
+    return require('highlight.js').highlightAuto(code).value;
+  }
+});
+
+
 export default React.createClass({
   mixins: [React.addons.LinkedStateMixin],
 
   getInitialState: function () {
     return {
-      content: '# Hello world'
+      content: '# Hello world\n```js\n console.log("hello"); \n```'
     };
   },
 
