@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import React from 'react';
 import _ from 'lodash';
 
@@ -23,39 +25,35 @@ const itemStyleSelected = _.merge({
 
 
 export default React.createClass({
-  render: function () {
-    return <ol style={_.merge({}, style, this.props.style)}>
-      <li style={itemStyleSelected}>
-        Adding syntax highlight to Markdown in Sublime Text 2
-      </li>
-      <li style={itemStyle}>
-        Creating an web markdown editor
-      </li>
-      <li style={itemStyle}>
-        Fix permission of SSH certificate
-      </li>
-      <li style={itemStyle}>
-        Getting tags in a specific commit (or HEAD)
-      </li>
-      <li style={itemStyle}>
-        Creating an web markdown editor
-      </li>
-      <li style={itemStyle}>
-        Fix permission of SSH certificate
-      </li>
-      <li style={itemStyle}>
-        Getting tags in a specific commit (or HEAD)
-      </li>
-      <li style={itemStyle}>
-        Creating an web markdown editor
-      </li>
-      <li style={itemStyle}>
-        Fix permission of SSH certificate
-      </li>
-      <li style={itemStyle}>
-        Getting tags in a specific commit (or HEAD)
-      </li>
+  getInitialState: function () {
+    const noteBookPath = path.join(__dirname, '../../sample');
+    const files = fs.readdirSync(noteBookPath).map((file, index) => {
+      return {
+        title: file,
+        id: index,
+        path: path.join(noteBookPath, file)
+      };
+    });
+    return {
+      files: files,
+      selected: null
+    };
+  },
 
+  render: function () {
+    const selected = this.state.selected;
+
+    return <ol style={_.merge({}, style, this.props.style)}>
+    {
+      this.state.files.map(file => {
+        return <li onClick={this.handleItemClick.bind(null, file)} style={file.id === selected ? itemStyleSelected : itemStyle}>{file.title}</li>;
+      })
+    }
     </ol>;
+  },
+
+  handleItemClick: function (selectedNote) {
+    this.setState({ selected: selectedNote.id });
+    this.props.onSelect(selectedNote);
   }
 });

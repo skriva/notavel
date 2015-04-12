@@ -23,10 +23,25 @@ const editorStyle = {
 };
 
 
+const Application = React.createClass({
+  getInitialState: function () {
+    return { notePath: null };
+  },
+
+  render: function () {
+    return <div style={applicationStyle}>
+      <NotesList style={notesListStyle} onSelect={this.handleSelection}/>
+      <Editor style={editorStyle} notePath={this.state.notePath}/>
+    </div>;
+  },
+
+  handleSelection: function (selectedNote) {
+    this.setState({ notePath: selectedNote.path });
+  }
+});
+
+
 React.render(
-  <div style={applicationStyle}>
-    <NotesList style={notesListStyle}/>
-    <Editor style={editorStyle}/>
-  </div>,
+  <Application/>,
   document.getElementById('main')
 );

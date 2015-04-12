@@ -1,3 +1,4 @@
+import fs from 'fs';
 import React from 'react/addons';
 import marked from 'marked';
 import _ from 'lodash';
@@ -44,8 +45,18 @@ export default React.createClass({
 
   getInitialState: function () {
     return {
-      content: '# Hello world\n```js\n console.log("hello"); \n```'
+      content: ''
     };
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    console.log('path', nextProps);
+
+    const content = fs.readFileSync(nextProps.notePath);
+
+    this.setState({
+      content: content.toString()
+    });
   },
 
   render: function () {
