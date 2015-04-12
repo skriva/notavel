@@ -1,5 +1,6 @@
 import React from 'react/addons';
 import marked from 'marked';
+import _ from 'lodash';
 
 
 const editableArea = {
@@ -50,7 +51,7 @@ export default React.createClass({
   render: function () {
     var markdown = marked(this.state.content);
 
-    return <div style={wrapper}>
+    return <div style={_.merge({}, wrapper, this.props.style)}>
       <textarea style={editableArea} valueLink={this.linkState('content')}></textarea>
       <div style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
     </div>;
