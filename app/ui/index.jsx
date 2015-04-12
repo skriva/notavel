@@ -1,7 +1,8 @@
 import React from 'react';
+import Editor from './editor.jsx';
 
 
 React.render(
-  <h1>Hello, bananas yay!</h1>,
+  <Editor/>,
   document.getElementById('main')
 );
