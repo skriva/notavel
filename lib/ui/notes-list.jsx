@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import React from 'react';
 import _ from 'lodash';
 
@@ -25,37 +23,22 @@ const itemStyleSelected = _.merge({
 
 
 export default React.createClass({
-  getInitialState: function () {
-    const noteBookPath = path.join(__dirname, '../../sample');
-    const files = fs.readdirSync(noteBookPath).filter(file => file.match(/md$/))
-
-    .map((file, index) => {
-      return {
-        title: file.replace('.md', ''),
-        id: index,
-        path: path.join(noteBookPath, file)
-      };
-    });
-    return {
-      files: files,
-      selected: null
-    };
-  },
-
   render: function () {
-    const selected = this.state.selected;
+    const selectedNote = this.props.selectedNote;
+    const list = this.props.list;
+
+    console.log('list', list);
 
     return <ol style={_.merge({}, style, this.props.style)}>
     {
-      this.state.files.map(file => {
-        return <li onClick={this.handleItemClick.bind(null, file)} style={file.id === selected ? itemStyleSelected : itemStyle}>{file.title}</li>;
+      list.map(note => {
+        return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</li>;
       })
     }
     </ol>;
   },
 
   handleItemClick: function (selectedNote) {
-    this.setState({ selected: selectedNote.id });
-    this.props.onSelect(selectedNote);
+    this.props.onSelectNote(selectedNote);
   }
 });

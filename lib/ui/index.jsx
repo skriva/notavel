@@ -1,7 +1,9 @@
+import path from 'path';
 import React from 'react';
 import Toolbar from './toolbar.jsx';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
+import NoteBook from '../notebook';
 
 
 const applicationStyle = {
@@ -37,17 +39,31 @@ const Application = React.createClass({
     return { notePath: null };
   },
 
+  componentWillMount: function () {
+    this.notebook = new NoteBook({ rootFolder: path.join(__dirname, '../../sample') });
+    this.notebook.onChange = () => this.forceUpdate();
+  },
+
   render: function () {
     return <div style={applicationStyle}>
-      <Toolbar style={toolbarStyle}/>
-      <NotesList style={notesListStyle} onSelect={this.handleSelection}/>
-      <Editor style={editorStyle} notePath={this.state.notePath}/>
+      <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd}/>
+      <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.notebook.notes} selectedNote={this.notebook.openedNote}/>
+      <Editor style={editorStyle} content={this.notebook.openedNote && this.notebook.openedNote.content || ''} onContentChange={this.handleContentChange} />
     </div>;
   },
 
+  handleAdd: function () {
+    this.notebook.addNote();
+  },
+
   handleSelection: function (selectedNote) {
-    this.setState({ notePath: selectedNote.path });
+    this.notebook.openNote(selectedNote);
+  },
+
+  handleContentChange: function (newContent) {
+    this.notebook.updateNoteContent(newContent);
   }
+
 });
 
 

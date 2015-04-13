@@ -1,4 +1,3 @@
-import fs from 'fs';
 import React from 'react/addons';
 import marked from 'marked';
 import _ from 'lodash';
@@ -41,30 +40,17 @@ marked.setOptions({
 
 
 export default React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
-
-  getInitialState: function () {
-    return {
-      content: ''
-    };
-  },
-
-  componentWillReceiveProps: function (nextProps) {
-    console.log('path', nextProps);
-
-    const content = fs.readFileSync(nextProps.notePath);
-
-    this.setState({
-      content: content.toString()
-    });
-  },
-
   render: function () {
-    var markdown = marked(this.state.content);
+    var markdown = marked(this.props.content);
 
     return <div style={_.merge({}, wrapper, this.props.style)}>
-      <textarea style={editableArea} valueLink={this.linkState('content')}></textarea>
+      <textarea style={editableArea} onChange={this.handleContentChange} value={this.props.content}></textarea>
       <div style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
     </div>;
+  },
+
+  handleContentChange: function (event) {
+    console.log(event);
+    this.props.onContentChange(event.currentTarget.value);
   }
 });
