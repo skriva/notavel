@@ -23,7 +23,9 @@ export default class Notebook {
 
   updateNoteContent (newContent) {
     this.openedNote.content = newContent;
+    this.openedNote.updatedAt = new Date();
     saveNote(this.openedNote);
+    this._sortNotes();
     this.onChange();
   }
 
@@ -32,17 +34,25 @@ export default class Notebook {
   }
 
   _loadNoteList () {
-    const notes = fs.readdirSync(this.rootFolder)
+    this.notes = fs.readdirSync(this.rootFolder)
       .filter(file => file.match(/md$/))
       .map((file, index) => {
+        const filename = path.join(this.rootFolder, file);
+        const stats = fs.statSync(filename);
+
         return {
           title: file.replace('.md', ''),
           id: index,
-          filename: path.join(this.rootFolder, file)
+          filename: filename,
+          updatedAt: stats.ctime
         };
       });
 
-    this.notes = notes;
+    this._sortNotes();
+  }
+
+  _sortNotes () {
+    this.notes = this.notes.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
 }
 
