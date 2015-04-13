@@ -7,10 +7,6 @@ import NoteBook from '../notebook';
 
 
 const applicationStyle = {
-  display: 'flex',
-  alignContent: 'stretch',
-  alignItems: 'stretch',
-  flexFlow: 'row wrap',
   height: '100%',
 };
 
@@ -34,6 +30,17 @@ const editorStyle = {
 };
 
 
+const mainContentContainerStyle = {
+  position: 'absolute',
+  top: '38px',
+  left: 0,
+  right: 0,
+  bottom:0,
+  overflow: 'hidden',
+  display: 'flex'
+};
+
+
 const Application = React.createClass({
   getInitialState: function () {
     return { notePath: null };
@@ -47,8 +54,10 @@ const Application = React.createClass({
   render: function () {
     return <div style={applicationStyle}>
       <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd}/>
-      <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.notebook.notes} selectedNote={this.notebook.openedNote}/>
-      <Editor style={editorStyle} content={this.notebook.openedNote && this.notebook.openedNote.content || ''} onContentChange={this.handleContentChange} />
+      <div style={mainContentContainerStyle}>
+        <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.notebook.notes} selectedNote={this.notebook.openedNote}/>
+        <Editor style={editorStyle} content={this.notebook.openedNote && this.notebook.openedNote.content || ''} onContentChange={this.handleContentChange} />
+      </div>
     </div>;
   },
 
