@@ -10,7 +10,7 @@ export default class Notebook {
   }
 
   addNote () {
-    fs.writeFileSync(path.join(this.rootFolder, `New note ${new Date().getTime()}.md`, ''));
+    fs.writeFileSync(path.join(this.rootFolder, `__${new Date().getTime()}.md`, ''));
     this._loadNoteList();
     this.onChange();
   }
@@ -24,6 +24,7 @@ export default class Notebook {
   updateNoteContent (newContent) {
     this.openedNote.content = newContent;
     this.openedNote.updatedAt = new Date();
+    this.openedNote.title = extractTitle(newContent);
     saveNote(this.openedNote);
     this._sortNotes();
     this.onChange();
@@ -41,7 +42,7 @@ export default class Notebook {
         const stats = fs.statSync(filename);
 
         return {
-          title: file.replace('.md', ''),
+          title: file.replace('.md', '').replace(/__.+$/, ''),
           id: index,
           filename: filename,
           updatedAt: stats.ctime
@@ -64,4 +65,10 @@ function loadNoteContent (note) {
 
 function saveNote (note) {
   fs.writeFileSync(note.filename, note.content);
+}
+
+
+function extractTitle (content) {
+  const match = content.match(/^# (.+)/);
+  return match && match[1] || '';
 }
