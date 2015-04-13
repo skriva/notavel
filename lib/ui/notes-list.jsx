@@ -27,9 +27,11 @@ const itemStyleSelected = _.merge({
 export default React.createClass({
   getInitialState: function () {
     const noteBookPath = path.join(__dirname, '../../sample');
-    const files = fs.readdirSync(noteBookPath).map((file, index) => {
+    const files = fs.readdirSync(noteBookPath).filter(file => file.match(/md$/))
+
+    .map((file, index) => {
       return {
-        title: file,
+        title: file.replace('.md', ''),
         id: index,
         path: path.join(noteBookPath, file)
       };
