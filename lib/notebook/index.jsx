@@ -9,8 +9,8 @@ export default class Notebook {
     this.openedNote = this.notes[0];
   }
 
-  createNote () {
-    fs.writeFileSync(path.join(this.rootFolder, `New note #{new Date().getTime()}.md`));
+  addNote () {
+    fs.writeFileSync(path.join(this.rootFolder, `New note ${new Date().getTime()}.md`, ''));
     this._loadNoteList();
     this.onChange();
   }
