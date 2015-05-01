@@ -19,4 +19,4 @@ Download code, install dependendencies and:
 npm start
 ```
 
-It is built on [Atom shell](https://github.com/atom/atom-shell) and [React](http://facebook.github.io/react/).
+It is built on [Atom shell](https://github.com/atom/electron) and [React](http://facebook.github.io/react/).
