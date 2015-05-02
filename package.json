@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "main": "lib/index.js",
   "scripts": {
-    "start": "atom-shell ."
+    "start": "electron ."
   },
   "devDependencies": {
-    "atom-shell": "^0.23.0",
     "atom-watcher": "^0.1.3",
+    "electron-prebuilt": "^0.25.1-1",
     "react-hot-api": "^0.4.3"
   },
   "dependencies": {
