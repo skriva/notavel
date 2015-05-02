@@ -38,15 +38,15 @@ export default class Notebook {
     this.notes = fs.readdirSync(this.rootFolder)
       .filter(file => file.match(/md$/))
       .map((file, index) => {
-        const filename = path.join(this.rootFolder, file);
-        const stats = fs.statSync(filename);
+        let note = {};
 
-        return {
-          title: file.replace('.md', '').replace(/__.+$/, ''),
-          id: index,
-          filename: filename,
-          updatedAt: stats.ctime
-        };
+        note.filename = path.join(this.rootFolder, file);
+        note.updatedAt = fs.statSync(note.filename).ctime;
+        note.id = index;
+        loadNoteContent(note);
+        note.title = extractTitle(note.content);
+
+        return note;
       });
 
     this._sortNotes();
