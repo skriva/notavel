@@ -7,7 +7,7 @@ import NoteBook from '../notebook';
 
 
 const applicationStyle = {
-  height: '100%',
+  height: '100%'
 };
 
 
@@ -26,7 +26,7 @@ const notesListStyle = {
 
 
 const editorStyle = {
-  flex: 1,
+  flex: 1
 };
 
 
@@ -35,7 +35,7 @@ const mainContentContainerStyle = {
   top: '38px',
   left: 0,
   right: 0,
-  bottom:0,
+  bottom: 0,
   overflow: 'hidden',
   display: 'flex'
 };

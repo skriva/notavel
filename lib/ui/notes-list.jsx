@@ -12,7 +12,7 @@ const style = {
 
 const itemStyle = {
   padding: '1em 0.5em',
-  borderBottom: '1px solid #E4E4E4',
+  borderBottom: '1px solid #E4E4E4'
 };
 
 

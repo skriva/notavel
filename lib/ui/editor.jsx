@@ -28,7 +28,7 @@ const wrapper = {
   display: 'flex',
   flexFlow: 'row wrap',
   alignContent: 'stretch',
-  alignItems: 'stretch',
+  alignItems: 'stretch'
 };
 
 
@@ -50,7 +50,7 @@ export default React.createClass({
   },
 
   handleContentChange: function (event) {
-    console.log(event);
+    // console.log(event);
     this.props.onContentChange(event.currentTarget.value);
   }
 });
