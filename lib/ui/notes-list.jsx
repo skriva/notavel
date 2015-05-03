@@ -24,14 +24,13 @@ const itemStyleSelected = _.merge({
 
 export default React.createClass({
   render: function () {
-    const selectedNote = this.props.selectedNote;
+    const selectedNote = this.props.selectedNote || {};
     const list = this.props.list;
-
-    console.log('list', list);
 
     return <ol style={_.merge({}, style, this.props.style)}>
     {
-      list.map(note => {
+      Object.keys(list).map(noteName => {
+        let note = list[noteName];
         return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</li>;
       })
     }

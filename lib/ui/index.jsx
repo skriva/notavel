@@ -3,7 +3,7 @@ import React from 'react';
 import Toolbar from './toolbar.jsx';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
-import NoteBook from '../notebook';
+import Library from '../library';
 
 
 const applicationStyle = {
@@ -47,30 +47,34 @@ const Application = React.createClass({
   },
 
   componentWillMount: function () {
-    this.notebook = new NoteBook({ rootFolder: path.join(__dirname, '../../sample') });
-    this.notebook.onChange = () => this.forceUpdate();
+    this.library = new Library({ rootPath: path.join(__dirname, '../../repository') });
+    this.library.read();
+    this.library.onChange = () => this.forceUpdate();
+
+    // selects first notebook while we don't have a notebooks screen
+    this.library.openedNotebook = this.library.notebooks[Object.keys(this.library.notebooks)[0]];
   },
 
   render: function () {
     return <div style={applicationStyle}>
       <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd}/>
       <div style={mainContentContainerStyle}>
-        <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.notebook.notes} selectedNote={this.notebook.openedNote}/>
-        <Editor style={editorStyle} content={this.notebook.openedNote && this.notebook.openedNote.content || ''} onContentChange={this.handleContentChange} />
+        <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+        <Editor style={editorStyle} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
       </div>
     </div>;
   },
 
   handleAdd: function () {
-    this.notebook.addNote();
+    this.library.createNote();
   },
 
   handleSelection: function (selectedNote) {
-    this.notebook.openNote(selectedNote);
+    this.library.readNote(selectedNote);
   },
 
   handleContentChange: function (newContent) {
-    this.notebook.updateNoteContent(newContent);
+    this.library.saveNote(newContent);
   }
 
 });

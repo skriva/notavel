@@ -1,3 +1,5 @@
 Atom.app
 node_modules
 .DS_Store
+repository
+lib/library/.notavel-cache
