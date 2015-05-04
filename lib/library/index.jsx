@@ -160,9 +160,12 @@ export default class Library {
     this.onChange();
   }
 
-  deleteNote (noteId) {
+  deleteNote (note) {
     // removes note from "cache"
     // delete file from disk
+    delete this.openedNotebook.notes[note.name];
+    fs.unlinkSync(note.filename);
+    this.onChange();
   }
 
   loadNoteFromDisk (notebookPath, file, index) {
