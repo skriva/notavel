@@ -25,6 +25,7 @@
     "lokijs": "^1.2.5",
     "marked": "^0.3.3",
     "normalize.css": "^3.0.3",
+    "prismjs": "git+ssh://git@github.com/PrismJS/prism.git",
     "react": "^0.13.1",
     "rsvp": "^3.0.18",
     "slug": "^0.9.1"

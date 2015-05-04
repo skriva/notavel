@@ -1,17 +1,15 @@
 import React from 'react/addons';
 import marked from 'marked';
 import _ from 'lodash';
+import MdEdit from './md-edit.jsx';
 
 
 const editableArea = {
   flex: '1 0 200px',
   border: 0,
   outline: 'none',
-  background: '#1B2B34',
-  color: '#CDD3DE',
   padding: '1.5em',
-  fontFamily: 'monospace',
-  fontSize: '1.2em'
+  margin: 0
 };
 
 
@@ -44,13 +42,12 @@ export default React.createClass({
     var markdown = marked(this.props.content);
 
     return <div style={_.merge({}, wrapper, this.props.style)}>
-      <textarea style={editableArea} onChange={this.handleContentChange} value={this.props.content}></textarea>
+      <MdEdit style={editableArea} onChange={this.handleContentChange} value={this.props.content}></MdEdit>
       <div style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
     </div>;
   },
 
-  handleContentChange: function (event) {
-    // console.log(event);
-    this.props.onContentChange(event.currentTarget.value);
+  handleContentChange: function (newValue) {
+    this.props.onContentChange(newValue);
   }
 });

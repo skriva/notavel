@@ -158,9 +158,12 @@ export default class Library {
     });
   }
 
+  /**
+    Saves note content to disk and update cache
+   */
   saveNote (newContent) {
-    // save note content to disk
-    // update cache
+    if (!this.openedNote) { return; }
+
     this.openedNote.content = newContent;
 
     this.notes.save(this.openedNote)
