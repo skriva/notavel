@@ -46,7 +46,7 @@ export default class Library {
   constructor ({ rootPath }) {
     this.rootPath = rootPath;
     this.notebooks = {};
-    this.cachePath = path.join(__dirname, '.notavel-cache');
+    this.cachePath = path.join(this.rootPath, '.notavel-cache');
     this.openedNotebook = null;
     this.openedNote = null;
   }
