@@ -70,7 +70,9 @@ const Application = React.createClass({
   },
 
   handleDelete: function () {
-    this.library.deleteNote(this.library.openedNote);
+    if (confirm('Are you sure you want to delete this note?')) {
+      this.library.deleteNote(this.library.openedNote);
+    }
   },
 
   handleSelection: function (selectedNote) {
