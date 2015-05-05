@@ -1,5 +1,6 @@
 import path from 'path';
 import React from 'react';
+import remote from 'remote';
 import Toolbar from './toolbar.jsx';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
@@ -53,6 +54,8 @@ const Application = React.createClass({
 
     // selects first notebook while we don't have a notebooks screen
     this.library.openedNotebook = this.library.notebooks[Object.keys(this.library.notebooks)[0]];
+
+    this.configureShortcuts();
   },
 
   render: function () {
@@ -70,6 +73,7 @@ const Application = React.createClass({
   },
 
   handleDelete: function () {
+    if (!this.library.openedNote) { return; }
     if (confirm('Are you sure you want to delete this note?')) {
       this.library.deleteNote(this.library.openedNote);
     }
@@ -81,6 +85,12 @@ const Application = React.createClass({
 
   handleContentChange: function (newContent) {
     this.library.saveNote(newContent);
+  },
+
+  configureShortcuts: function () {
+    let globalShortcut = remote.require('global-shortcut');
+    globalShortcut.register('cmd+n', this.handleAdd);
+    globalShortcut.register('cmd+d', this.handleDelete);
   }
 
 });
