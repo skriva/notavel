@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import co from 'co';
 import { denodeify } from 'rsvp';
+import DataIndex from './data-index';
 
 /**
   Library abstraction to hold notebooks and notes.
@@ -49,6 +50,7 @@ export default class Library {
     this.cachePath = path.join(this.rootPath, '.notavel-cache');
     this.openedNotebook = null;
     this.openedNote = null;
+    this.dataIndex = new DataIndex();
   }
 
   read () {
@@ -149,14 +151,17 @@ export default class Library {
 
   saveNote (newContent) {
     // save note content to disk
-    // update cache on title
-    // returns note object
-
     this.openedNote.content = newContent;
     this.openedNote.updatedAt = new Date();
     this.openedNote.title = extractTitle(newContent);
     fs.writeFileSync(this.openedNote.filename, this.openedNote.content);
     this._sortNotes();
+
+    // update index
+    this.dataIndex.saveNote(this.openedNote);
+
+    // returns note object
+
     this.onChange();
   }
 
