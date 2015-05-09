@@ -52,10 +52,21 @@ const Application = React.createClass({
     this.library.read();
     this.library.onChange = () => this.forceUpdate();
 
-    // selects first notebook while we don't have a notebooks screen
-    this.library.openedNotebook = this.library.notebooks[Object.keys(this.library.notebooks)[0]];
+    this.library.openedNotebook = {};
 
     this.configureShortcuts();
+  },
+
+  componentDidMount: function () {
+    // selects first notebook while we don't have a notebooks screen
+    this.library.findNotebooks().then((notebooks) => {
+      this.library.openedNotebook = notebooks[0] || {};
+
+      this.library.findNotes().then((notes) => {
+        this.library.openedNotebook.notes = notes;
+        this.forceUpdate();
+      });
+    });
   },
 
   render: function () {

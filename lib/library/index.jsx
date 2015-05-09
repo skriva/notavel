@@ -1,7 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import co from 'co';
-import { denodeify } from 'rsvp';
+// import co from 'co';
+import rsvp from 'rsvp';
+// import { denodeify, rsvp } from 'rsvp';
+import DataIndex from './data-index';
 
 /**
   Library abstraction to hold notebooks and notes.
@@ -46,9 +48,10 @@ export default class Library {
   constructor ({ rootPath }) {
     this.rootPath = rootPath;
     this.notebooks = {};
-    this.cachePath = path.join(this.rootPath, '.notavel-cache');
     this.openedNotebook = null;
     this.openedNote = null;
+    this.cachePath = path.join(this.rootPath, '.cache');
+    this.dataIndex = new DataIndex({ cachePath: this.cachePath });
   }
 
   read () {
@@ -67,15 +70,19 @@ export default class Library {
   }
 
   loadLibraryFromDisk () {
-    // loads the whole library with no cache
-    let files = fs.readdirSync(this.rootPath);
+    return this.dataIndex.findNotes().then((notes) => {
+      // the cache already exists
+      if (notes.length) { return rsvp.resolve(); }
 
-    files.forEach((file) => {
-      this.loadNotebookFromDisk(file, path.join(this.rootPath, file));
-    }.bind(this));
+      // loads the whole library with no cache
+      let files = fs.readdirSync(this.rootPath);
 
-    // saves the loaded library in memory into a cache file
-    this.save();
+      var promises = files.map((file) => {
+        return this.loadNotebookFromDisk(file, path.join(this.rootPath, file));
+      }.bind(this));
+
+      return rsvp.all(promises);
+    });
   }
 
   sync () {
@@ -92,6 +99,9 @@ export default class Library {
     // creates notebook in the cache
     // creates a folder to store the notes
     // returns notebook object
+    return this.dataIndex.createNotebook({
+      title: title
+    });
   }
 
   renameNotebook ({ id, title }) {
@@ -102,40 +112,60 @@ export default class Library {
 
   }
 
+  findNotebooks () {
+    return this.dataIndex.findNotebooks();
+  }
+
   loadNotebookFromDisk (dirName, dirPath) {
-    if (!fs.statSync(dirPath).isDirectory()) { return; }
+    if (!fs.statSync(dirPath).isDirectory()) { return rsvp.resolve(); }
 
-    if (!this.notebooks[dirName]) {
-      this.notebooks[dirName] = {
-        name: dirName,
-        path: dirPath,
-        notes: {}
-      };
-    }
+    return this.createNotebook({ title: dirName }).then(() => {
+      // if (!this.notebooks[dirName]) {
+      //   this.notebooks[dirName] = {
+      //     name: dirName,
+      //     path: dirPath,
+      //     notes: {}
+      //   };
+      // }
 
-    fs.readdirSync(dirPath)
-      .filter(file => file.match(/md$/))
-      .forEach((file, index) => {
-        let note = this.loadNoteFromDisk(dirPath, file, index);
-        this.notebooks[dirName].notes[note.name] = note;
-      }.bind(this));
+      var promises = fs.readdirSync(dirPath)
+        .filter(file => file.match(/md$/))
+        .map((file, index) => {
+          return this.loadNoteFromDisk(dirPath, file, index);
+        }.bind(this));
 
-    this._sortNotes();
+      // this._sortNotes();
+      return rsvp.all(promises);
+    });
   }
 
 
   // Note APIs
 
+  findNotes () {
+    return this.dataIndex.findNotes();
+  }
 
   createNote () {
-    // create the file
-    // leave the title empty
-    // updates the "cache"
-    // returns the note object
+    const id = new Date().getTime();
+    const note = {
+      id: id,
+      name: `__${id}.md`,
+      title: '# new document'
+    };
 
-    fs.writeFileSync(path.join(this.openedNotebook.path, `__${new Date().getTime()}.md`), '# new document');
-    this.loadNotebookFromDisk(this.openedNotebook.name, this.openedNotebook.path);
-    this.onChange();
+
+    // TODO: DYNAMIC
+    this.openedNotebook.path = path.join(this.rootPath, 'notebook');
+
+    // create the file
+    fs.writeFileSync(path.join(this.openedNotebook.path, note.name), note.title);
+    this.loadNotebookFromDisk(this.openedNotebook.name, this.openedNotebook.path)
+      .then(() => {
+        // updates the "cache"
+        return this.dataIndex.createNote(note).then(() => this.onChange());
+      });
+
   }
 
   readNote (note) {
@@ -148,15 +178,17 @@ export default class Library {
   }
 
   saveNote (newContent) {
-    // save note content to disk
-    // update cache on title
-    // returns note object
-
     this.openedNote.content = newContent;
     this.openedNote.updatedAt = new Date();
     this.openedNote.title = extractTitle(newContent);
+
+    // save note content to disk
     fs.writeFileSync(this.openedNote.filename, this.openedNote.content);
     this._sortNotes();
+
+    // update cache
+    // this.dataIndex.saveNote(this.openedNote).then(() => this.onChange());
+
     this.onChange();
   }
 
@@ -168,17 +200,17 @@ export default class Library {
     this.onChange();
   }
 
-  loadNoteFromDisk (notebookPath, file, index) {
+  loadNoteFromDisk (notebookPath, file) {
+    const id = new Date().getTime();
     let note = {};
-
+    note.id = id;
     note.name = file;
     note.filename = path.join(notebookPath, file);
     note.updatedAt = fs.statSync(note.filename).ctime;
-    note.id = index;
     loadNoteContent(note);
     note.title = extractTitle(note.content);
 
-    return note;
+    return this.dataIndex.saveNote(note);
   }
 
   _sortNotes () {
