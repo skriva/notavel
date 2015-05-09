@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "electron .",
+    "debug": "DEBUG=enabled npm start",
     "test": "eslint lib"
   },
   "devDependencies": {
