@@ -125,7 +125,6 @@ const Application = React.createClass({
   },
 
   _handleChangeEditorMode: function () {
-    console.log('change' + this.state.editorMode);
     this.setState({ editorMode: this.state.editorMode === 'editor' ? 'preview' : 'editor' });
   },
 
