@@ -59,6 +59,10 @@ const Application = React.createClass({
   },
 
   render: function () {
+    if (!this.library.openedNote && this.library.openedNotebook.notes) {
+      this.library.openedNote = this.library.openedNotebook.notes[0];
+    }
+
     return (
       <div style={applicationStyle}>
         <div style={mainContentContainerStyle}>
