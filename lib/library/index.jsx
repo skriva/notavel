@@ -1,9 +1,10 @@
 import path from 'path';
-import fs from 'fs';
 // import co from 'co';
 import rsvp from 'rsvp';
-// import { denodeify, rsvp } from 'rsvp';
-import DataIndex from './data-index';
+import Loki from 'lokijs';
+import Notebooks from './notebooks';
+import Notes from './notes';
+
 
 /**
   Library abstraction to hold notebooks and notes.
@@ -47,11 +48,11 @@ import DataIndex from './data-index';
 export default class Library {
   constructor ({ rootPath }) {
     this.rootPath = rootPath;
-    this.notebooks = {};
     this.openedNotebook = null;
     this.openedNote = null;
-    this.cachePath = path.join(this.rootPath, '.cache');
-    this.dataIndex = new DataIndex({ cachePath: this.cachePath });
+    this.db = new Loki('notavel.json');
+    this.notebooks = new Notebooks({ db: this.db });
+    this.notes = new Notes({ db: this.db });
   }
 
   read () {
@@ -66,22 +67,35 @@ export default class Library {
   }
 
   save () {
-    fs.writeFileSync(this.cachePath, JSON.stringify(this.notebooks));
+    // Save whole library db to disk
   }
 
   loadLibraryFromDisk () {
-    return this.dataIndex.findNotes().then((notes) => {
+    //
+    // TODO: REFACTOR THESE TERRIBLE NESTED CALLBACKS
+    //
+    return this.notes.find().then((result) => {
       // the cache already exists
-      if (notes.length) { return rsvp.resolve(); }
+      if (result.length) { return rsvp.resolve(); }
 
-      // loads the whole library with no cache
-      let files = fs.readdirSync(this.rootPath);
+      return this.notebooks._findDisk({ parentNotebookPath: this.rootPath }).then((notebooks) => {
+        let notebookPromises = notebooks.map((notebook) => {
+          return this.notebooks._createDB(notebook).then((dbNotebook) => {
 
-      var promises = files.map((file) => {
-        return this.loadNotebookFromDisk(file, path.join(this.rootPath, file));
-      }.bind(this));
+            // NOTES
+            return this.notes._findDisk({ notebookPath: notebook.path }).then((notes) => {
+              let notePromises = notes.map((note) => {
+                note.notebookId = dbNotebook.id;
+                return this.notes._createDB(note);
+              });
 
-      return rsvp.all(promises);
+              return rsvp.all(notePromises);
+            });
+          });
+        });
+
+        return rsvp.all(notebookPromises);
+      });
     });
   }
 
@@ -99,7 +113,7 @@ export default class Library {
     // creates notebook in the cache
     // creates a folder to store the notes
     // returns notebook object
-    return this.dataIndex.createNotebook({
+    return this.db.notebooks.create({
       title: title
     });
   }
@@ -113,120 +127,50 @@ export default class Library {
   }
 
   findNotebooks () {
-    return this.dataIndex.findNotebooks();
-  }
-
-  loadNotebookFromDisk (dirName, dirPath) {
-    if (!fs.statSync(dirPath).isDirectory()) { return rsvp.resolve(); }
-
-    return this.createNotebook({ title: dirName }).then(() => {
-      // if (!this.notebooks[dirName]) {
-      //   this.notebooks[dirName] = {
-      //     name: dirName,
-      //     path: dirPath,
-      //     notes: {}
-      //   };
-      // }
-
-      var promises = fs.readdirSync(dirPath)
-        .filter(file => file.match(/md$/))
-        .map((file, index) => {
-          return this.loadNoteFromDisk(dirPath, file, index);
-        }.bind(this));
-
-      // this._sortNotes();
-      return rsvp.all(promises);
-    });
+    return this.notebooks.find();
   }
 
 
   // Note APIs
 
   findNotes () {
-    return this.dataIndex.findNotes();
+    return this.notes.find()
+      .then((notes) => this.openedNotebook.notes = notes)
+      .then(() => this.onChange());
   }
 
   createNote () {
-    const id = new Date().getTime();
-    const note = {
-      id: id,
-      name: `__${id}.md`,
-      title: '# new document'
-    };
-
-
-    // TODO: DYNAMIC
-    this.openedNotebook.path = path.join(this.rootPath, 'notebook');
+    // TODO: selected notebook
+    const notebookPath = path.join(this.rootPath, 'notebook');
 
     // create the file
-    fs.writeFileSync(path.join(this.openedNotebook.path, note.name), note.title);
-    this.loadNotebookFromDisk(this.openedNotebook.name, this.openedNotebook.path)
-      .then(() => {
-        // updates the "cache"
-        return this.dataIndex.createNote(note).then(() => this.onChange());
-      });
-
+    this.notes.create({ notebookPath: notebookPath })
+      .then(() => this.findNotes());
   }
 
   readNote (note) {
     // read note content from disk
     // returns note object
-
-    this.openedNote = note;
-    loadNoteContent(note);
-    this.onChange();
+    this.notes.findOneById(note.$loki).then((result) => {
+      this.openedNote = result;
+      this.onChange();
+    });
   }
 
   saveNote (newContent) {
-    this.openedNote.content = newContent;
-    this.openedNote.updatedAt = new Date();
-    this.openedNote.title = extractTitle(newContent);
-
     // save note content to disk
-    fs.writeFileSync(this.openedNote.filename, this.openedNote.content);
-    this._sortNotes();
-
     // update cache
-    // this.dataIndex.saveNote(this.openedNote).then(() => this.onChange());
+    this.openedNote.content = newContent;
 
-    this.onChange();
+    this.notes.save(this.openedNote)
+      .then(() => this.onChange());
   }
 
   deleteNote (note) {
     // removes note from "cache"
     // delete file from disk
-    delete this.openedNotebook.notes[note.name];
-    fs.unlinkSync(note.filename);
-    this.onChange();
-  }
-
-  loadNoteFromDisk (notebookPath, file) {
-    const id = new Date().getTime();
-    let note = {};
-    note.id = id;
-    note.name = file;
-    note.filename = path.join(notebookPath, file);
-    note.updatedAt = fs.statSync(note.filename).ctime;
-    loadNoteContent(note);
-    note.title = extractTitle(note.content);
-
-    return this.dataIndex.saveNote(note);
-  }
-
-  _sortNotes () {
-    if (!this.openedNotebook || !this.openedNotebook.notes) { return; }
-    // TODO: sort by property key name
-    // this.openedNotebook.notes = this.openedNotebook.notes.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    this.notes.remove(note)
+      .then(() => this.findNotes());
   }
 }
 
-
-function loadNoteContent (note) {
-  note.content = fs.readFileSync(note.filename).toString();
-}
-
-
-function extractTitle (content) {
-  const match = content.match(/^# (.+)/);
-  return match && match[1] || '';
-}

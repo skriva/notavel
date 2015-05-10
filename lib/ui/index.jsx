@@ -49,7 +49,6 @@ const Application = React.createClass({
 
   componentWillMount: function () {
     this.library = new Library({ rootPath: path.join(__dirname, '../../repository') });
-    this.library.read();
     this.library.onChange = () => this.forceUpdate();
 
     this.library.openedNotebook = {};
@@ -58,13 +57,12 @@ const Application = React.createClass({
   },
 
   componentDidMount: function () {
-    // selects first notebook while we don't have a notebooks screen
-    this.library.findNotebooks().then((notebooks) => {
-      this.library.openedNotebook = notebooks[0] || {};
+    this.library.read().then(() => {
+      // selects first notebook while we don't have a notebooks screen
+      this.library.findNotebooks().then((notebooks) => {
+        this.library.openedNotebook = notebooks[0] || {};
 
-      this.library.findNotes().then((notes) => {
-        this.library.openedNotebook.notes = notes;
-        this.forceUpdate();
+        this.library.findNotes();
       });
     });
   },
