@@ -15,7 +15,6 @@ const editableArea = {
 
 const previewArea = {
   flex: '1 0 200px',
-  background: '#EEEEEE',
   padding: '1.5em',
   overflow: 'scroll'
 };
@@ -43,7 +42,7 @@ export default React.createClass({
 
     return <div style={_.merge({}, wrapper, this.props.style)}>
       <MdEdit style={editableArea} onChange={this.handleContentChange} value={this.props.content}></MdEdit>
-      <div style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
+      <div className="markdown-body" style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
     </div>;
   },
 

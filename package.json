@@ -21,6 +21,7 @@
     "babel": "^5.0.12",
     "co": "^4.5.2",
     "font-awesome": "^4.3.0",
+    "github-markdown-css": "^2.0.8",
     "highlight.js": "^8.5.0",
     "lodash": "^3.6.0",
     "lokijs": "^1.2.5",
