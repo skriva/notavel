@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { denodeify } from 'rsvp';
+import slug from 'slug';
 
 
 const INITIAL_CONTENT = '# new document';
@@ -13,25 +14,32 @@ export default class Note {
   }
 
   create ({ notebookPath }) {
-    const id = new Date().getTime();
-    const name = `__${id}.md`;
-    const note = {
-      id: id,
-      name: name,
-      content: INITIAL_CONTENT,
-      title: extractTitle(INITIAL_CONTENT),
-      filename: path.join(notebookPath, name),
-      createdAt: new Date()
-    };
+    let note = {};
+    note.createdAt = new Date();
+    note.content = INITIAL_CONTENT;
+    note.title = extractTitle(note.content);
+    note.name = `${slug(note.title)}.md`;
+    note.filename = path.join(notebookPath, note.name);
 
-    return this._createDB(note).then(() => this._saveDisk(note));
+    return this._createDB(note)
+      .then(() => this._saveDisk(note));
   }
 
   save (note) {
     note.updatedAt = new Date();
+    const oldTitle = note.title;
     note.title = extractTitle(note.content);
 
-    return this._saveDB(note).then(() => this._saveDisk(note));
+    let promises = Promise.resolve();
+    if (oldTitle !== note.title) {
+      promises = promises
+        .then(() => this._renameDisk({ note: note, oldTitle: oldTitle }))
+        .then((newPath) => note.filename = newPath);
+    }
+
+    return promises
+      .then(() => this._saveDB(note))
+      .then(() => this._saveDisk(note));
   }
 
   remove (note) {
@@ -92,6 +100,15 @@ export default class Note {
     return denodeify(fs.writeFile).call(fs, note.filename, note.content);
   }
 
+  _renameDisk ({ note, oldTitle }) {
+    const notebookPath = path.dirname(note.filename);
+    const oldPath = path.join(notebookPath, `${slug(oldTitle)}.md`);
+    const newPath = path.join(notebookPath, `${slug(note.title)}.md`);
+
+    return denodeify(fs.rename).call(fs, oldPath, newPath)
+      .then(() => newPath);
+  }
+
   _removeDisk (note) {
     return denodeify(fs.unlink).call(fs, note.filename);
   }
@@ -109,9 +126,7 @@ export default class Note {
 
 
 function mapNoteFromDisk (notebookPath, file) {
-  const id = new Date().getTime();
   let note = {};
-  note.id = id;
   note.name = file;
   note.filename = path.join(notebookPath, file);
   note.updatedAt = fs.statSync(note.filename).ctime;

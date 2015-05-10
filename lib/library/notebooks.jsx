@@ -35,7 +35,17 @@ export default class Notebook {
   }
 
   _findDB (query) {
-    return new Promise((resolve) => resolve(this.notebooks.chain().find(query).data()));
+    return new Promise((resolve) => resolve(
+      this.notebooks.chain()
+        .find(query)
+        .simplesort('$loki', true)
+        .data()
+        .map((doc) => {
+          doc.id = doc.$loki;
+          return doc;
+        })
+      )
+    );
   }
 
   /**

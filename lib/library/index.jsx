@@ -152,7 +152,7 @@ export default class Library {
   readNote (note) {
     // read note content from disk
     // returns note object
-    this.notes.findOneById(note.$loki).then((result) => {
+    this.notes.findOneById(note.id).then((result) => {
       this.openedNote = result;
       this.onChange();
     });

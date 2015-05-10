@@ -30,7 +30,7 @@ export default React.createClass({
     return <ol style={_.merge({}, style, this.props.style)}>
     {
       list.map(note => {
-        return <li key={note.name} onClick={this.handleItemClick.bind(null, note)} style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</li>;
+        return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</li>;
       })
     }
     </ol>;
