@@ -174,6 +174,7 @@ export default class Library {
     // removes note from "cache"
     // delete file from disk
     this.notes.remove(note)
+      .then(() => this.openedNote = null)
       .then(() => this.findNotes());
   }
 
