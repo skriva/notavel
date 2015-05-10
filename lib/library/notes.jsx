@@ -16,6 +16,7 @@ export default class Note {
   create ({ notebookPath }) {
     let note = {};
     note.createdAt = new Date();
+    note.updatedAt = new Date(); // sets it already to keep it the top
     note.content = INITIAL_CONTENT;
     note.title = extractTitle(note.content);
     note.name = `${slug(note.title)}.md`;
