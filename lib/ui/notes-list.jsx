@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 
 
 const style = {
@@ -7,7 +6,7 @@ const style = {
   padding: 0,
   color: 'black',
   background: '#FBFBFB',
-  'overflow-y': 'scroll',
+  'overflowY': 'scroll',
   borderRight: '1px solid #E4E4E4'
 };
 
@@ -21,30 +20,47 @@ const itemStyle = {
 };
 
 
-const itemStyleSelected = _.merge({}, itemStyle, {
+const itemStyleSelected = Object.assign({}, itemStyle, {
   borderRightColor: '#d4d2d4'
 });
 
 
 const listItemStyle = {
   borderBottom: '1px solid #E4E4E4'
-}
+};
 
 
 export default React.createClass({
+  propTypes: {
+    list: React.PropTypes.array,
+    onSelectNote: React.PropTypes.func,
+    selectedNote: React.PropTypes.object,
+    style: React.PropTypes.object
+  },
+
+  getDefaultProps: function () {
+    return {
+      selectedNote: {},
+      list: [],
+      onSelectNote: function () { }
+    };
+  },
+
   render: function () {
     const selectedNote = this.props.selectedNote || {};
     const list = this.props.list || [];
 
-    return <ol style={_.merge({}, style, this.props.style)}>
-    {
-      list.map(note => {
-        return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={listItemStyle}>
-          <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</span>
-        </li>;
-      })
-    }
-    </ol>;
+    return (
+      <ol style={Object.assign({}, style, this.props.style)}>
+      {
+        list.map(note => {
+          return (<li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={listItemStyle}>
+            <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</span>
+          </li>);
+        })
+      }
+      </ol>
+    );
   },
 
   handleItemClick: function (selectedNote) {

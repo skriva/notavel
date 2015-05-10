@@ -68,13 +68,15 @@ const Application = React.createClass({
   },
 
   render: function () {
-    return <div style={applicationStyle}>
-      <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd} onClickDelete={this.handleDelete} selectedNote={this.library.openedNote} />
-      <div style={mainContentContainerStyle}>
-        <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
-        <Editor style={editorStyle} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
+    return (
+      <div style={applicationStyle}>
+        <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd} onClickDelete={this.handleDelete} selectedNote={this.library.openedNote} />
+        <div style={mainContentContainerStyle}>
+          <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+          <Editor style={editorStyle} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
+        </div>
       </div>
-    </div>;
+    );
   },
 
   handleAdd: function () {

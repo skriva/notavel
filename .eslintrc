@@ -18,12 +18,14 @@
     "no-underscore-dangle": [0],
     "no-use-before-define": [2, "nofunc"],
 
+    "no-alert": 0,
+
     // react
-    "react/display-name": 1,
+    "react/display-name": 0,
     "react/jsx-boolean-value": 1,
     "react/jsx-quotes": 1,
     "react/jsx-no-undef": 1,
-    "react/jsx-sort-props": 1,
+    "react/jsx-sort-props": 0,
     "react/jsx-sort-prop-types": 1,
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,
