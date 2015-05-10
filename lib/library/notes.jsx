@@ -70,7 +70,7 @@ export default class Note {
     return Promise.resolve(
       this.notes.chain()
         .find(query)
-        .simplesort('$loki', true)
+        .simplesort('updatedAt', true)
         .data()
         .map((doc) => {
           doc.id = doc.$loki;

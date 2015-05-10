@@ -167,7 +167,7 @@ export default class Library {
     this.openedNote.content = newContent;
 
     this.notes.save(this.openedNote)
-      .then(() => this.onChange());
+      .then(() => this.findNotes());
   }
 
   deleteNote (note) {
