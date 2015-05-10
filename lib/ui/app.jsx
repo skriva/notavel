@@ -14,8 +14,9 @@ const applicationStyle = {
 
 const toolbarStyle = {
   width: '100%',
-  background: '#3b536b',
-  color: 'white',
+  background: '#d4d2d4',
+  borderBottom: '1px solid #c3c0c3',
+  color: '#4C4B4C',
   lineHeight: '38px'
 };
 

@@ -5,21 +5,30 @@ import _ from 'lodash';
 const style = {
   listStyleType: 'none',
   padding: 0,
-  color: '#626262',
-  overflow: 'scroll'
+  color: 'black',
+  background: '#FBFBFB',
+  'overflow-y': 'scroll',
+  borderRight: '1px solid #E4E4E4'
 };
 
 
 const itemStyle = {
+  display: 'block',
   padding: '1em 0.5em',
-  borderBottom: '1px solid #E4E4E4'
+  borderRightWidth: '4px',
+  borderRightStyle: 'solid',
+  borderRightColor: 'transparent'
 };
 
 
-const itemStyleSelected = _.merge({
-  background: '#101D23',
-  color: '#CDD3DE'
-}, itemStyle);
+const itemStyleSelected = _.merge({}, itemStyle, {
+  borderRightColor: '#d4d2d4'
+});
+
+
+const listItemStyle = {
+  borderBottom: '1px solid #E4E4E4'
+}
 
 
 export default React.createClass({
@@ -30,7 +39,9 @@ export default React.createClass({
     return <ol style={_.merge({}, style, this.props.style)}>
     {
       list.map(note => {
-        return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</li>;
+        return <li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={listItemStyle}>
+          <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</span>
+        </li>;
       })
     }
     </ol>;
