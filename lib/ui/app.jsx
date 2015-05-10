@@ -33,9 +33,26 @@ const mainContentContainerStyle = {
 };
 
 
+const toolbarStyle = {
+  position: 'fixed',
+  zIndex: 10,
+  top: 10,
+  right: 10,
+  fontSize: '1em'
+};
+
+const toolbarButtonStyle = {
+  border: 'none',
+  background: 'transparent'
+};
+
+
 const Application = React.createClass({
   getInitialState: function () {
-    return { notePath: null };
+    return {
+      editorMode: 'preview',
+      notePath: null
+    };
   },
 
   componentWillMount: function () {
@@ -65,9 +82,21 @@ const Application = React.createClass({
 
     return (
       <div style={applicationStyle}>
+        <div style={toolbarStyle}>
+          {
+            this.state.editorMode === 'editor' ?
+              <button style={toolbarButtonStyle} onClick={this._handleChangeEditorMode}>
+                <i className="fa fa-eye"></i>
+              </button>
+            :
+              <button style={toolbarButtonStyle} onClick={this._handleChangeEditorMode}>
+                <i className="fa fa-pencil"></i>
+              </button>
+          }
+        </div>
         <div style={mainContentContainerStyle}>
           <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
-          <Editor style={editorStyle} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
+          <Editor style={editorStyle} mode={this.state.editorMode} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
         </div>
       </div>
     );
@@ -90,6 +119,11 @@ const Application = React.createClass({
 
   handleContentChange: function (newContent) {
     this.library.saveNote(newContent);
+  },
+
+  _handleChangeEditorMode: function () {
+    console.log('change' + this.state.editorMode);
+    this.setState({ editorMode: this.state.editorMode === 'editor' ? 'preview' : 'editor' });
   },
 
   configureShortcuts: function () {

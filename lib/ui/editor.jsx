@@ -39,16 +39,31 @@ marked.setOptions({
 
 
 export default React.createClass({
-  render: function () {
-    var markdown = marked(this.props.content);
-
-    return <div style={_.merge({}, wrapper, this.props.style)}>
-      <MdEdit style={editableArea} onChange={this.handleContentChange} value={this.props.content}></MdEdit>
-      <div className="markdown-body" style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>
-    </div>;
+  propTypes: {
+    content: React.PropTypes.string,
+    mode: React.PropTypes.string,
+    onContentChange: React.PropTypes.func,
+    style: React.PropTypes.object
   },
 
-  handleContentChange: function (newValue) {
+  render: function () {
+    return (
+      <div style={_.merge({}, wrapper, this.props.style)}>
+        { this.props.mode === 'editor' ? this._renderEditor() : this._renderPreview() }
+      </div>
+    );
+  },
+
+  _renderEditor: function () {
+    return <MdEdit style={editableArea} onChange={this._handleContentChange} value={this.props.content}/>;
+  },
+
+  _renderPreview: function () {
+    const markdown = marked(this.props.content);
+    return <div className="markdown-body" style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>;
+  },
+
+  _handleContentChange: function (newValue) {
     this.props.onContentChange(newValue);
   }
 });
