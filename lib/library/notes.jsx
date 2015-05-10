@@ -51,23 +51,32 @@ export default class Note {
    */
 
   _createDB (note) {
-    return new Promise((resolve) => resolve(this.notes.insert(note)));
+    return Promise.resolve(this.notes.insert(note));
   }
 
   _saveDB (note) {
-    return new Promise((resolve) => resolve(this.notes.update(note)));
+    return Promise.resolve(this.notes.update(note));
   }
 
   _findDB (query) {
-    return new Promise((resolve) => resolve(this.notes.chain().find(query).simplesort('$loki', true).data()));
+    return Promise.resolve(
+      this.notes.chain()
+        .find(query)
+        .simplesort('$loki', true)
+        .data()
+        .map((doc) => {
+          doc.id = doc.$loki;
+          return doc;
+        })
+      );
   }
 
   _findOneByIdDB (id) {
-    return new Promise((resolve) => resolve(this.notes.get(id)));
+    return Promise.resolve(this.notes.get(id));
   }
 
   _removeDB (query) {
-    return new Promise((resolve) => resolve(this.notes.remove(query)));
+    return Promise.resolve(this.notes.remove(query));
   }
 
   /**

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-// import rsvp from 'rsvp';
 import { denodeify } from 'rsvp';
 
 
@@ -27,12 +26,12 @@ export default class Notebook {
    */
 
   _createDB (notebook) {
-    return new Promise((resolve) => resolve(this.notebooks.insert(notebook)));
+    return Promise.resolve(this.notebooks.insert(notebook));
   }
 
   _saveDB (notebook) {
-    return new Promise((resolve) => resolve(this.notebooks.insert(notebook)));
-    // return new Promise((resolve) => resolve(this.notebooks.update(notebook)));
+    return Promise.resolve(this.notebooks.insert(notebook));
+    // return Promise.resolve(this.notebooks.update(notebook));
   }
 
   _findDB (query) {
