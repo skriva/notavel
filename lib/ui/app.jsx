@@ -1,7 +1,6 @@
 import path from 'path';
 import React from 'react';
 import remote from 'remote';
-import Toolbar from './toolbar.jsx';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
 import Library from '../library';
@@ -9,14 +8,6 @@ import Library from '../library';
 
 const applicationStyle = {
   height: '100%'
-};
-
-
-const toolbarStyle = {
-  width: '100%',
-  background: '#d4d2d4',
-  color: '#4C4B4C',
-  lineHeight: '38px'
 };
 
 
@@ -33,7 +24,7 @@ const editorStyle = {
 
 const mainContentContainerStyle = {
   position: 'absolute',
-  top: '38px',
+  top: '0',
   left: 0,
   right: 0,
   bottom: 0,
@@ -70,7 +61,6 @@ const Application = React.createClass({
   render: function () {
     return (
       <div style={applicationStyle}>
-        <Toolbar style={toolbarStyle} onClickAdd={this.handleAdd} onClickDelete={this.handleDelete} selectedNote={this.library.openedNote} />
         <div style={mainContentContainerStyle}>
           <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
           <Editor style={editorStyle} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
