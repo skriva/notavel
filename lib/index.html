@@ -12,10 +12,52 @@
       body, html, #main { height: 100%; }
       * { box-sizing: 'border-box';}
     </style>
+
+    <style>
+      @font-face {
+        font-family: 'Source Code Pro';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Source Code Pro'),
+             local('SourceCodePro-Regular'),
+             url(../vendor/source-code-pro/woff/otf/SourceCodePro-Regular.otf.woff) format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Source Code Pro';
+        font-style: bold;
+        font-weight: 700;
+        src: local('Source Code Pro'),
+             local('SourceCodePro-Bold'),
+             url(../vendor/source-code-pro/woff/otf/SourceCodePro-Bold.otf.woff) format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Source Code Pro';
+        font-style: normal;
+        font-weight: 200;
+        src: local('Source Code Pro'),
+             local('SourceCodePro-Light'),
+             url(../vendor/source-code-pro/woff/otf/SourceCodePro-Light.otf.woff) format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Source Code Pro';
+        font-style: normal;
+        font-weight: 100;
+        src: local('Source Code Pro'),
+             local('SourceCodePro-ExtraLight'),
+             url(../vendor/source-code-pro/woff/otf/SourceCodePro-ExtraLight.otf.woff) format('woff2');
+      }
+    </style>
+
     <style>
       .mdedit .code-block { background: rgba(120,120,120,0.1); padding: 1em; display: block; }
       .mdedit .operator { background: none; }
+      .mdedit .heading { color: #3498db; font-weight: 100; }
+      .mdedit { font-family: 'Source Code Pro'; }
     </style>
+
     <style>
       /*
 

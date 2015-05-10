@@ -8,8 +8,10 @@ const editableArea = {
   flex: '1 0 200px',
   border: 0,
   outline: 'none',
-  padding: '1.5em',
-  margin: 0
+  padding: '0 1.5em',
+  margin: 0,
+  background: '#f5f2f0',
+  overflow: 'scroll'
 };
 
 

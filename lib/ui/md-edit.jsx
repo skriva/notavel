@@ -31,9 +31,11 @@ export default React.createClass({
 
   render: function () {
     return (
-      <pre style={this.props.style} ref="pre">
-        {this.props.value}
-      </pre>
+      <div style={this.props.style}>
+        <pre style={{ height: '100%', maxWidth: '760px', margin: 'auto' }} ref="pre">
+          {this.props.value}
+        </pre>
+      </div>
     );
   }
 });
