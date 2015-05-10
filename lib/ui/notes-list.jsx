@@ -1,4 +1,5 @@
 import React from 'react';
+import marked from 'marked';
 
 
 const style = {
@@ -55,7 +56,10 @@ export default React.createClass({
       {
         list.map(note => {
           return (<li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={listItemStyle}>
-            <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>{note.title}</span>
+            <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>
+              <h1 style={{ margin: 0, fontSize: '1em', fontWeight: 'normal' }}>{note.title}</h1>
+              <p style={{ margin: 0, marginTop: '0.5em', fontSize: '0.6em' }}>{exerpt(note.content)}</p>
+            </span>
           </li>);
         })
       }
@@ -67,3 +71,9 @@ export default React.createClass({
     this.props.onSelectNote(selectedNote);
   }
 });
+
+function exerpt (content) {
+  const tokens = marked.lexer(content);
+  const firstParagraph = tokens.find(t => t.type === 'paragraph');
+  return (firstParagraph && firstParagraph.text || '').substring(0, 100);
+}

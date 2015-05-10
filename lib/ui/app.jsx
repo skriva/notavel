@@ -12,7 +12,7 @@ const applicationStyle = {
 
 
 const notesListStyle = {
-  width: '200px',
+  width: '300px',
   margin: 0
 };
 
