@@ -133,8 +133,8 @@ export default class Library {
 
   // Note APIs
 
-  findNotes () {
-    return this._findNotes()
+  findNotes (query) {
+    return this._findNotes(query)
       .then(() => this.onChange());
   }
 
@@ -178,8 +178,8 @@ export default class Library {
       .then(() => this.findNotes());
   }
 
-  _findNotes () {
-    return this.notes.find()
+  _findNotes (query) {
+    return this.notes.find(query)
       .then((notes) => this.openedNotebook.notes = notes);
   }
 }

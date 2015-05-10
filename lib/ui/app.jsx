@@ -12,7 +12,9 @@ const applicationStyle = {
 
 
 const notesListStyle = {
+  position: 'relative',
   width: '300px',
+  height: '100%',
   margin: 0
 };
 
@@ -41,9 +43,31 @@ const toolbarStyle = {
   fontSize: '1em'
 };
 
+
 const toolbarButtonStyle = {
   border: 'none',
   background: 'transparent'
+};
+
+
+const searchBoxStyle = {
+  padding: '0.5em',
+  position: 'absolute',
+  background: '#FBFBFB',
+  bottom: 0,
+  left: 0,
+  right: 1
+};
+
+
+const searchBoxInputStyle = {
+  fontSize: '0.8em',
+  display: 'block',
+  width: '100%',
+  borderRadius: '2px',
+  padding: '0.1em 0.5em',
+  WebkitAppearance: 'none',
+  border: '1px solid #E4E4E4'
 };
 
 
@@ -101,7 +125,12 @@ const Application = React.createClass({
           </button>
         </div>
         <div style={mainContentContainerStyle}>
-          <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+          <div style={notesListStyle}>
+            <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+            <div style={searchBoxStyle}>
+              <input type="text" onChange={this._handleSearch} ref="search" style={searchBoxInputStyle} placeholder="Search" />
+            </div>
+          </div>
           <Editor style={editorStyle} mode={this.state.editorMode} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
         </div>
       </div>
@@ -125,6 +154,12 @@ const Application = React.createClass({
 
   handleContentChange: function (newContent) {
     this.library.saveNote(newContent);
+  },
+
+  _handleSearch: function () {
+    this.library.findNotes({
+      title: { $regex: new RegExp(this.refs.search.getDOMNode().value, 'ig') }
+    });
   },
 
   _handleChangeEditorMode: function () {
