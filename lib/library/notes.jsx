@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-// import rsvp from 'rsvp';
 import { denodeify } from 'rsvp';
+
+
+const INITIAL_CONTENT = '# new document';
 
 
 export default class Note {
@@ -16,8 +18,10 @@ export default class Note {
     const note = {
       id: id,
       name: name,
-      title: '# new document',
-      filename: path.join(notebookPath, name)
+      content: INITIAL_CONTENT,
+      title: extractTitle(INITIAL_CONTENT),
+      filename: path.join(notebookPath, name),
+      createdAt: new Date()
     };
 
     return this._createDB(note).then(() => this._saveDisk(note));
@@ -55,7 +59,7 @@ export default class Note {
   }
 
   _findDB (query) {
-    return new Promise((resolve) => resolve(this.notes.chain().find(query).data()));
+    return new Promise((resolve) => resolve(this.notes.chain().find(query).simplesort('$loki', true).data()));
   }
 
   _findOneByIdDB (id) {

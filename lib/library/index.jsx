@@ -134,8 +134,7 @@ export default class Library {
   // Note APIs
 
   findNotes () {
-    return this.notes.find()
-      .then((notes) => this.openedNotebook.notes = notes)
+    return this._findNotes()
       .then(() => this.onChange());
   }
 
@@ -145,7 +144,9 @@ export default class Library {
 
     // create the file
     this.notes.create({ notebookPath: notebookPath })
-      .then(() => this.findNotes());
+      .then(() => this._findNotes())
+      .then(() => this.openedNote = this.openedNotebook.notes[0])
+      .then(() => this.onChange());
   }
 
   readNote (note) {
@@ -171,6 +172,11 @@ export default class Library {
     // delete file from disk
     this.notes.remove(note)
       .then(() => this.findNotes());
+  }
+
+  _findNotes () {
+    return this.notes.find()
+      .then((notes) => this.openedNotebook.notes = notes);
   }
 }
 
