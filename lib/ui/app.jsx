@@ -96,6 +96,9 @@ const Application = React.createClass({
           <button style={toolbarButtonStyle} onClick={this.handleDelete}>
             <i className="fa fa-trash"></i>
           </button>
+          <button style={toolbarButtonStyle} onClick={this.handleAdd}>
+            <i className="fa fa-plus"></i>
+          </button>
         </div>
         <div style={mainContentContainerStyle}>
           <NotesList style={notesListStyle} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
