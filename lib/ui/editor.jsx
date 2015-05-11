@@ -60,7 +60,13 @@ export default React.createClass({
 
   _renderPreview: function () {
     const markdown = marked(this.props.content);
-    return <div className="markdown-body" style={previewArea} dangerouslySetInnerHTML={{ __html: markdown}}></div>;
+    return (
+      <div style={previewArea}>
+        <div className="markdown-body"
+             style={{ height: '100%', maxWidth: '760px', margin: 'auto' }}
+             dangerouslySetInnerHTML={{ __html: markdown}}></div>
+      </div>
+    );
   },
 
   _handleContentChange: function (newValue) {
