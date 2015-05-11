@@ -1,4 +1,3 @@
-import path from 'path';
 import React from 'react';
 import remote from 'remote';
 import Editor from './editor.jsx';
