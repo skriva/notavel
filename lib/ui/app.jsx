@@ -1,3 +1,4 @@
+import ipc from 'ipc';
 import React from 'react';
 import remote from 'remote';
 import Editor from './editor.jsx';
@@ -75,7 +76,8 @@ const Application = React.createClass({
   getInitialState: function () {
     return {
       editorMode: 'preview',
-      notePath: null
+      notePath: null,
+      fullScreen: false
     };
   },
 
@@ -86,6 +88,14 @@ const Application = React.createClass({
     this.library.openedNotebook = {};
 
     this.configureShortcuts();
+
+    ipc.on('enter-full-screen', () => {
+      this.setState({ fullScreen: true });
+    });
+
+    ipc.on('leave-full-screen', () => {
+      this.setState({ fullScreen: false });
+    });
   },
 
   componentDidMount: function () {
@@ -125,12 +135,15 @@ const Application = React.createClass({
           </button>
         </div>
         <div style={mainContentContainerStyle}>
-          <div style={notesListStyle}>
-            <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
-            <div style={searchBoxStyle}>
-              <input type="text" onChange={this._handleSearch} ref="search" style={searchBoxInputStyle} placeholder="Search" />
+          {
+            !this.state.fullScreen &&
+            <div style={notesListStyle}>
+              <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+              <div style={searchBoxStyle}>
+                <input type="text" onChange={this._handleSearch} ref="search" style={searchBoxInputStyle} placeholder="Search" />
+              </div>
             </div>
-          </div>
+          }
           <Editor style={editorStyle} mode={this.state.editorMode} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
         </div>
       </div>
