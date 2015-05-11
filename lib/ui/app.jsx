@@ -140,6 +140,7 @@ const Application = React.createClass({
 
   handleAdd: function () {
     this.library.createNote();
+    this.setState({ editorMode: 'editor' });
   },
 
   handleDelete: function () {
