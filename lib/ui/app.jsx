@@ -4,6 +4,7 @@ import remote from 'remote';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
 import Library from '../library';
+import config from '../config';
 
 
 const applicationStyle = {
@@ -80,7 +81,7 @@ const Application = React.createClass({
   },
 
   componentWillMount: function () {
-    this.library = new Library({ rootPath: path.join(__dirname, '../../repository') });
+    this.library = new Library({ rootPath: config.rootPath });
     this.library.onChange = () => this.forceUpdate();
 
     this.library.openedNotebook = {};
