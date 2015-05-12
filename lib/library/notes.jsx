@@ -181,7 +181,8 @@ function extractTitle (content) {
 
 function extractSufixIDFromFilename (newName, originalName) {
   if (!originalName) { return null; }
-  const match = originalName.match(new RegExp('^'+escapeRegExp(newName.replace(/\.md$/, ''))+'\-nk([0-9]+)\.md', 'i'));
+  const regex = '^' + escapeRegExp(newName.replace(/\.md$/, '')) + '\-nk([0-9]+)\.md';
+  const match = originalName.match(new RegExp(regex, 'i'));
   if (!match || !match.length) { return null; }
   return parseInt(match[1], 10);
 }
