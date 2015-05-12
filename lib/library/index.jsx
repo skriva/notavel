@@ -164,9 +164,12 @@ export default class Library {
   saveNote (newContent) {
     if (!this.openedNote) { return; }
 
+    // TODO: selected notebook
+    const notebookPath = path.join(this.rootPath, 'notebook');
+
     this.openedNote.content = newContent;
 
-    this.notes.save(this.openedNote)
+    this.notes.save({ notebookPath, note: this.openedNote })
       .then(() => this.findNotes());
   }
 

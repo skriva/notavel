@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { denodeify } from 'rsvp';
 import slug from 'slug';
+import { escapeRegExp } from 'lodash';
 
 
 const INITIAL_CONTENT = '# new document';
@@ -16,35 +17,24 @@ export default class Note {
   create ({ notebookPath }) {
     let note = {};
     note.createdAt = new Date();
-    note.updatedAt = new Date(); // sets it already to keep it the top
+    note.updatedAt = new Date(); // sets it already due sort reason
     note.content = INITIAL_CONTENT;
     note.title = extractTitle(note.content);
-    note.name = `${slug(note.title)}.md`;
-    note.filename = path.join(notebookPath, note.name);
 
-    return this._createDB(note)
-      .then(() => this._saveDisk(note));
+    return this._saveDisk({ notebookPath, note })
+      .then(() => this._createDB(note));
   }
 
-  save (note) {
+  save ({ notebookPath, note }) {
     note.updatedAt = new Date();
-    const oldTitle = note.title;
     note.title = extractTitle(note.content);
 
-    let promises = Promise.resolve();
-    if (oldTitle !== note.title) {
-      promises = promises
-        .then(() => this._renameDisk({ note: note, oldTitle: oldTitle }))
-        .then((newPath) => note.filename = newPath);
-    }
-
-    return promises
-      .then(() => this._saveDB(note))
-      .then(() => this._saveDisk(note));
+    return this._saveDisk({ notebookPath, note })
+      .then(() => this._saveDB(note));
   }
 
   remove (note) {
-    return this._removeDB(note).then(() => this._removeDisk(note));
+    return this._removeDisk(note).then(() => this._removeDB(note));
   }
 
   find (query) {
@@ -92,22 +82,63 @@ export default class Note {
    * Disk
    */
 
-  _createDisk (note) {
-    const filename = path.join(this.openedNotebook.path, note.name);
-    return denodeify(fs.writeFile).call(fs, filename, note.title);
+   /**
+    * saves note file in the disk and defines the file name
+    * @param options.notebookPath
+    * @param options.note
+    */
+  _saveDisk ({ notebookPath, note }) {
+    const originalName = note.name;
+    note.name = `${slug(note.title)}.md`;
+
+    let promises = Promise.resolve();
+
+    // ensure has a uniqure name for new files or in case it has changed the name
+    if (!note.id || originalName !== note.name) {
+      promises = promises
+        .then(() => this._generateUniqueNameDisk({ notebookPath, note, originalName }))
+        .then((newName) => note.name = newName);
+    }
+
+    // renames in the disk in case it has changed the name
+    if (note.id && originalName !== note.name) {
+      promises = promises
+        .then(() => this._renameDisk({ notebookPath, note, originalName }));
+    }
+
+    // saves file in the disk
+    return promises.then(() => {
+      const filename = path.join(notebookPath, note.name);
+      return denodeify(fs.writeFile).call(fs, filename, note.content);
+    });
   }
 
-  _saveDisk (note) {
-    return denodeify(fs.writeFile).call(fs, note.filename, note.content);
+  _renameDisk ({ notebookPath, note, originalName }) {
+    const oldPath = path.join(notebookPath, originalName);
+    const newPath = path.join(notebookPath, note.name);
+
+    return denodeify(fs.rename).call(fs, oldPath, newPath);
   }
 
-  _renameDisk ({ note, oldTitle }) {
-    const notebookPath = path.dirname(note.filename);
-    const oldPath = path.join(notebookPath, `${slug(oldTitle)}.md`);
-    const newPath = path.join(notebookPath, `${slug(note.title)}.md`);
+  _generateUniqueNameDisk ({ notebookPath, note, index, originalName }) {
+    if (!index) { index = 0; }
+    const name = index > 0 ? `${slug(note.title)}-nk${index}.md` : `${slug(note.title)}.md`;
+    const notePath = path.join(notebookPath, name);
 
-    return denodeify(fs.rename).call(fs, oldPath, newPath)
-      .then(() => newPath);
+    return this._existsDisk(notePath).then((exists) => {
+      if (!exists) { return name; }
+
+      // in case is the file itself should keep using the same name
+      if (index === 0 && extractSufixIDFromFilename(name, originalName)) { return originalName; }
+
+      // try a new name ending with another sufix
+      index += 1;
+      return this._generateUniqueNameDisk({ notebookPath, note, index });
+    });
+  }
+
+  _existsDisk (notePath) {
+    return new Promise((resolve) => fs.exists(notePath, (exists) => resolve(exists)));
   }
 
   _removeDisk (note) {
@@ -145,4 +176,12 @@ function loadNoteContent (note) {
 function extractTitle (content) {
   const match = content.match(/^# (.+)/);
   return match && match[1] || '';
+}
+
+
+function extractSufixIDFromFilename (newName, originalName) {
+  if (!originalName) { return null; }
+  const match = originalName.match(new RegExp('^'+escapeRegExp(newName.replace(/\.md$/, ''))+'\-nk([0-9]+)\.md', 'i'));
+  if (!match || !match.length) { return null; }
+  return parseInt(match[1], 10);
 }
