@@ -118,11 +118,11 @@ export default class Library {
     });
   }
 
-  renameNotebook ({ id, title }) {
+  renameNotebook (/*{ id, title }*/) {
 
   }
 
-  deleteNotebook (notebookId) {
+  deleteNotebook (/*notebookId*/) {
 
   }
 
