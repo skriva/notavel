@@ -183,8 +183,8 @@ const Application = React.createClass({
 
   _configureShortcuts: function () {
     let globalShortcut = remote.require('global-shortcut');
-    globalShortcut.register('cmd+n', this._handleAdd);
-    globalShortcut.register('cmd+d', this._handleDelete);
+    globalShortcut.register('CmdOrCtrl+N', this._handleAdd);
+    globalShortcut.register('CmdOrCtrl+D', this._handleDelete);
   }
 
 });
