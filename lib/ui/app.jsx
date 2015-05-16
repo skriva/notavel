@@ -1,7 +1,7 @@
 import ipc from 'ipc';
 import React from 'react';
-import remote from 'remote';
 import { debounce } from 'lodash';
+import Menu from './menu.jsx';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
 import Library from '../library';
@@ -83,12 +83,16 @@ const Application = React.createClass({
   },
 
   componentWillMount: function () {
+    this.menu = new Menu({
+      handleAdd: this._handleAdd,
+      handleDelete: this._handleDelete,
+      handleChangeEditorMode: this._handleChangeEditorMode
+    });
+
     this.library = new Library({ rootPath: config.rootPath });
     this.library.onChange = () => this.forceUpdate();
 
     this.library.openedNotebook = {};
-
-    this._configureShortcuts();
 
     ipc.on('enter-full-screen', () => {
       this.setState({ fullScreen: true });
@@ -108,6 +112,10 @@ const Application = React.createClass({
         this.library.findNotes();
       });
     });
+  },
+
+  componentDidUpdate: function () {
+    this.menu.build({ openedNote: this.library.openedNotebook });
   },
 
   render: function () {
@@ -179,12 +187,6 @@ const Application = React.createClass({
 
   _handleChangeEditorMode: function () {
     this.setState({ editorMode: this.state.editorMode === 'editor' ? 'preview' : 'editor' });
-  },
-
-  _configureShortcuts: function () {
-    let globalShortcut = remote.require('global-shortcut');
-    globalShortcut.register('CmdOrCtrl+N', this._handleAdd);
-    globalShortcut.register('CmdOrCtrl+D', this._handleDelete);
   }
 
 });
