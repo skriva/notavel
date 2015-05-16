@@ -87,7 +87,7 @@ const Application = React.createClass({
 
     this.library.openedNotebook = {};
 
-    this.configureShortcuts();
+    this._configureShortcuts();
 
     ipc.on('enter-full-screen', () => {
       this.setState({ fullScreen: true });
@@ -127,10 +127,10 @@ const Application = React.createClass({
                 <i className="fa fa-pencil"></i>
               </button>
           }
-          <button style={toolbarButtonStyle} onClick={this.handleDelete}>
+          <button style={toolbarButtonStyle} onClick={this._handleDelete}>
             <i className="fa fa-trash"></i>
           </button>
-          <button style={toolbarButtonStyle} onClick={this.handleAdd}>
+          <button style={toolbarButtonStyle} onClick={this._handleAdd}>
             <i className="fa fa-plus"></i>
           </button>
         </div>
@@ -138,35 +138,35 @@ const Application = React.createClass({
           {
             !this.state.fullScreen &&
             <div style={notesListStyle}>
-              <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this.handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+              <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this._handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
               <div style={searchBoxStyle}>
                 <input type="text" onChange={this._handleSearch} ref="search" style={searchBoxInputStyle} placeholder="Search" />
               </div>
             </div>
           }
-          <Editor style={editorStyle} mode={this.state.editorMode} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this.handleContentChange} />
+          <Editor style={editorStyle} mode={this.state.editorMode} content={this.library.openedNote && this.library.openedNote.content || ''} onContentChange={this._handleContentChange} />
         </div>
       </div>
     );
   },
 
-  handleAdd: function () {
+  _handleAdd: function () {
     this.library.createNote();
     this.setState({ editorMode: 'editor' });
   },
 
-  handleDelete: function () {
+  _handleDelete: function () {
     if (!this.library.openedNote) { return; }
     if (confirm('Are you sure you want to delete this note?')) {
       this.library.deleteNote(this.library.openedNote);
     }
   },
 
-  handleSelection: function (selectedNote) {
+  _handleSelection: function (selectedNote) {
     this.library.readNote(selectedNote);
   },
 
-  handleContentChange: function (newContent) {
+  _handleContentChange: function (newContent) {
     this.library.saveNote(newContent);
   },
 
@@ -180,10 +180,10 @@ const Application = React.createClass({
     this.setState({ editorMode: this.state.editorMode === 'editor' ? 'preview' : 'editor' });
   },
 
-  configureShortcuts: function () {
+  _configureShortcuts: function () {
     let globalShortcut = remote.require('global-shortcut');
-    globalShortcut.register('cmd+n', this.handleAdd);
-    globalShortcut.register('cmd+d', this.handleDelete);
+    globalShortcut.register('cmd+n', this._handleAdd);
+    globalShortcut.register('cmd+d', this._handleDelete);
   }
 
 });
