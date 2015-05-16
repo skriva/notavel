@@ -1,6 +1,7 @@
 import ipc from 'ipc';
 import React from 'react';
 import remote from 'remote';
+import { debounce } from 'lodash';
 import Editor from './editor.jsx';
 import NotesList from './notes-list.jsx';
 import Library from '../library';
@@ -166,9 +167,9 @@ const Application = React.createClass({
     this.library.readNote(selectedNote);
   },
 
-  _handleContentChange: function (newContent) {
+  _handleContentChange: debounce(function (newContent) {
     this.library.saveNote(newContent);
-  },
+  }, 1000),
 
   _handleSearch: function () {
     this.library.findNotes({
