@@ -111,7 +111,10 @@ const Application = React.createClass({
   },
 
   componentDidUpdate: function () {
-    this.menu.build({ openedNote: this.library.openedNotebook });
+    this.menu.build({
+      openedNotebook: this.library.openedNotebook,
+      openedNote: this.library.openedNote
+    });
   },
 
   render: function () {

@@ -1,5 +1,7 @@
 import ipc from 'ipc';
 import remote from 'remote';
+import shell from 'shell';
+import path from 'path';
 
 
 export default class AppMenu {
@@ -9,7 +11,7 @@ export default class AppMenu {
     this._handleChangeEditorMode = handleChangeEditorMode;
   }
 
-  build ({ openedNote }) {
+  build ({ openedNotebook, openedNote }) {
     const Menu = remote.require('menu');
     var template = [
       {
@@ -72,6 +74,14 @@ export default class AppMenu {
             accelerator: 'CmdOrCtrl+D',
             enabled: !!openedNote,
             click: this._handleDelete
+          },
+          {
+            label: 'Show in folder',
+            accelerator: 'CmdOrCtrl+O',
+            enabled: !!openedNote,
+            click: () => {
+              shell.showItemInFolder(path.join(openedNotebook.path, openedNote.name));
+            }
           }
         ]
       },
