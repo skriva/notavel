@@ -1,3 +1,4 @@
+import ipc from 'ipc';
 import remote from 'remote';
 
 
@@ -44,12 +45,12 @@ export default class AppMenu {
           },
           {
             type: 'separator'
+          },
+          {
+            label: 'Quit',
+            accelerator: 'CmdOrCtrl+Q',
+            click: function() { ipc.sendSync('quit-app'); }
           }
-          // {
-          //   label: 'Quit',
-          //   accelerator: 'CmdOrCtrl+Q',
-          //   click: function() { app.quit(); }
-          // },
         ]
       },
       {
