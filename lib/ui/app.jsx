@@ -52,6 +52,17 @@ const toolbarButtonStyle = {
 };
 
 
+const notebookStyle = {
+  padding: '0.5em',
+  position: 'absolute',
+  background: '#E4E4E4',
+  top: 0,
+  left: 0,
+  right: 1,
+  color: '#000'
+};
+
+
 const searchBoxStyle = {
   padding: '0.5em',
   position: 'absolute',
@@ -146,7 +157,13 @@ const Application = React.createClass({
           {
             !this.state.fullScreen &&
             <div style={notesListStyle}>
-              <NotesList style={{ padding: 0, margin: 0, height: '100%' }} onSelectNote={this._handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
+              <div style={notebookStyle}>
+                <h1 style={{ fontSize: '1em' }}>
+                <i className="fa fa-book" style={{ marginRight: '0.5em' }}></i>
+                {this.library.openedNotebook && this.library.openedNotebook.title}
+              </h1>
+              </div>
+              <NotesList style={{ padding: '3.5em 0 0 0', margin: 0, height: '100%' }} onSelectNote={this._handleSelection} list={this.library.openedNotebook.notes} selectedNote={this.library.openedNote}/>
               <div style={searchBoxStyle}>
                 <input type="text" onChange={this._handleSearch} ref="search" style={searchBoxInputStyle} placeholder="Search" />
               </div>
