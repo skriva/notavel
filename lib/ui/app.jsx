@@ -1,4 +1,4 @@
-import ipc from 'ipc';
+import remote from 'remote';
 import React from 'react';
 import { debounce } from 'lodash';
 import Menu from './menu.jsx';
@@ -94,13 +94,9 @@ const Application = React.createClass({
 
     this.library.openedNotebook = {};
 
-    ipc.on('enter-full-screen', () => {
-      this.setState({ fullScreen: true });
-    });
-
-    ipc.on('leave-full-screen', () => {
-      this.setState({ fullScreen: false });
-    });
+    remote.getCurrentWindow()
+      .on('enter-full-screen', () => { this.setState({ fullScreen: true }); })
+      .on('leave-full-screen', () => { this.setState({ fullScreen: false }); });
   },
 
   componentDidMount: function () {
