@@ -31,6 +31,7 @@
     "prismjs": "git+ssh://git@github.com/PrismJS/prism.git",
     "react": "^0.13.1",
     "rsvp": "^3.0.18",
-    "slug": "^0.9.1"
+    "slug": "^0.9.1",
+    "spellchecker": "^2.2.1"
   }
 }

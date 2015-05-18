@@ -1,5 +1,7 @@
 import remote from 'remote';
+import webFrame from 'web-frame';
 import React from 'react';
+import spellchecker from 'spellchecker';
 import { debounce } from 'lodash';
 import Menu from './menu.jsx';
 import Editor from './editor.jsx';
@@ -108,6 +110,12 @@ const Application = React.createClass({
     remote.getCurrentWindow()
       .on('enter-full-screen', () => { this.setState({ fullScreen: true }); })
       .on('leave-full-screen', () => { this.setState({ fullScreen: false }); });
+
+    webFrame.setSpellCheckProvider('en-US', false, {
+      spellCheck: function(text) {
+        return !(spellchecker.isMisspelled(text));
+      }
+    });
   },
 
   componentDidMount: function () {
