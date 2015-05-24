@@ -143,7 +143,7 @@ export default class Library {
     const notebookPath = path.join(this.rootPath, 'notebook');
 
     // create the file
-    this.notes.create({ notebookPath: notebookPath })
+    return this.notes.create({ notebookPath: notebookPath })
       .then(() => this._findNotes())
       .then(() => this.openedNote = this.openedNotebook.notes[0])
       .then(() => this.onChange());
@@ -162,14 +162,14 @@ export default class Library {
     Saves note content to disk and update cache
    */
   saveNote (newContent) {
-    if (!this.openedNote) { return; }
+    if (!this.openedNote) { return null; }
 
     // TODO: selected notebook
     const notebookPath = path.join(this.rootPath, 'notebook');
 
     this.openedNote.content = newContent;
 
-    this.notes.save({ notebookPath, note: this.openedNote })
+    return this.notes.save({ notebookPath, note: this.openedNote })
       .then(() => this.findNotes());
   }
 
