@@ -8,7 +8,7 @@ const editableArea = {
   flex: '1 0 200px',
   border: 0,
   outline: 'none',
-  padding: '0 1.5em',
+  padding: '1.5em',
   margin: 0,
   background: '#f5f2f0',
   overflow: 'scroll'
@@ -61,7 +61,7 @@ export default React.createClass({
   _renderPreview: function () {
     const markdown = marked(this.props.content);
     return (
-      <div style={previewArea}>
+      <div className="markdown-preview" style={previewArea}>
         <div className="markdown-body"
              style={{ height: '100%', maxWidth: '760px', margin: 'auto' }}
              dangerouslySetInnerHTML={{ __html: markdown}}></div>

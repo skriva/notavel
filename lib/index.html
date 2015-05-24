@@ -53,7 +53,7 @@
       }
 
       html {
-        font-family: 'Source Code Pro';
+        font-family: 'Helvetica Neue'
       }
 
       * { box-sizing: border-box;}
@@ -62,8 +62,16 @@
     <style>
       .mdedit .code-block { background: rgba(120,120,120,0.1); padding: 1em; display: block; }
       .mdedit .operator { background: none; }
-      .mdedit .heading { color: #3498db; font-weight: 100; }
-      .mdedit { font-family: 'Source Code Pro'; }
+      .mdedit .heading, .mdedit .heading .marker { color: #3498db; font-weight: 100; }
+      .mdedit { padding: 0; font-family: 'Source Code Pro'; font-size: inherit; }
+      .mdedit .token.strong, .mdedit .token.strong .marker { color: #D8419B; }
+      .mdedit .token.em, .mdedit .token.em .marker { color: #FC5E80; }
+
+      .markdown-preview { background: #f5f2f0; }
+      .markdown-preview h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5 { color: #3498db; font-weight: 100; }
+      .markdown-preview strong { color: #D8419B; }
+      .markdown-preview em { color: #FC5E80; }
+      .markdown-body .highlight pre, .markdown-body pre { background: rgba(120,120,120,0.1); }
     </style>
 
     <style>

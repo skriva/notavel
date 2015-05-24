@@ -15,14 +15,15 @@ const style = {
 const itemStyle = {
   display: 'block',
   padding: '1em 0.5em',
-  borderRightWidth: '4px',
+  borderRightWidth: '2px',
   borderRightStyle: 'solid',
-  borderRightColor: 'transparent'
+  borderRightColor: 'transparent',
+  minHeight: '80px'
 };
 
 
 const itemStyleSelected = Object.assign({}, itemStyle, {
-  borderRightColor: '#d4d2d4'
+  borderRightColor: '#3498db'
 });
 
 
@@ -57,8 +58,8 @@ export default React.createClass({
         list.map(note => {
           return (<li key={note.id} onClick={this.handleItemClick.bind(null, note)} style={listItemStyle}>
             <span style={note.id === selectedNote.id ? itemStyleSelected : itemStyle}>
-              <h1 style={{ margin: 0, fontSize: '1em', fontWeight: 'normal' }}>{note.title}</h1>
-              <p style={{ margin: 0, marginTop: '0.5em', fontSize: '0.6em' }}>{exerpt(note.content)}</p>
+              <h1 style={{ margin: 0, fontSize: '1em', fontWeight: 'bold' }}>{note.title}</h1>
+              <p style={{ margin: 0, marginTop: '0.5em', fontSize: '0.7em' }}>{exerpt(note.content)}</p>
             </span>
           </li>);
         })

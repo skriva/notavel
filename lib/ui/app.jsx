@@ -55,7 +55,8 @@ const toolbarButtonStyle = {
 const notebookStyle = {
   padding: '0.5em',
   position: 'absolute',
-  background: '#E4E4E4',
+  background: '#F2EFEF',
+  borderBottom: '1px solid #E4E4E4',
   top: 0,
   left: 0,
   right: 1,
