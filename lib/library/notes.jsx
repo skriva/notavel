@@ -3,6 +3,7 @@ import path from 'path';
 import { denodeify } from 'rsvp';
 import slug from 'slug';
 import { escapeRegExp } from 'lodash';
+import { stripFrontMatter } from '../front-matter.jsx';
 
 
 const INITIAL_CONTENT = '# new document';
@@ -174,8 +175,8 @@ function loadNoteContent (note) {
 
 
 function extractTitle (content) {
-  const match = content.match(/^# (.+)/);
-  return match && match[1] || '';
+  const match = stripFrontMatter(content).match(/# (.+)/);
+  return match && match[1] || 'untitled';
 }
 
 

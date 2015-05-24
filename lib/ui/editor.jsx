@@ -2,6 +2,7 @@ import React from 'react/addons';
 import marked from 'marked';
 import _ from 'lodash';
 import MdEdit from './md-edit.jsx';
+import { stripFrontMatter } from '../front-matter.jsx';
 
 
 const editableArea = {
@@ -59,7 +60,8 @@ export default React.createClass({
   },
 
   _renderPreview: function () {
-    const markdown = marked(this.props.content);
+    const markdown = marked(stripFrontMatter(this.props.content));
+
     return (
       <div className="markdown-preview" style={previewArea}>
         <div className="markdown-body"
