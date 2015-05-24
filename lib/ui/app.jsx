@@ -197,8 +197,12 @@ const Application = React.createClass({
   }, 1000),
 
   _handleSearch: function () {
+    const value = new RegExp(this.refs.search.getDOMNode().value, 'ig');
     this.library.findNotes({
-      title: { $regex: new RegExp(this.refs.search.getDOMNode().value, 'ig') }
+      $or: [
+        { title: { $regex: value } },
+        { content: { $regex: value } }
+      ]
     });
   },
 
