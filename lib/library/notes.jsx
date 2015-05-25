@@ -15,15 +15,15 @@ export default class Note {
     this.notes = this.db.addCollection('notes');
   }
 
-  create ({ notebookPath }) {
+  async create ({ notebookPath }) {
     let note = {};
     note.createdAt = new Date();
     note.updatedAt = new Date(); // sets it already due sort reason
     note.content = INITIAL_CONTENT;
     note.title = extractTitle(note.content);
 
-    return this._saveDisk({ notebookPath, note })
-      .then(() => this._createDB(note));
+    await this._saveDisk({ notebookPath, note });
+    return this._createDB(note);
   }
 
   save ({ notebookPath, note }) {
@@ -34,8 +34,9 @@ export default class Note {
       .then(() => this._saveDB(note));
   }
 
-  remove (note) {
-    return this._removeDisk(note).then(() => this._removeDB(note));
+  async remove (note) {
+    await this._removeDisk(note);
+    return this._removeDB(note);
   }
 
   find (query) {
