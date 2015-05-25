@@ -1,6 +1,4 @@
 import path from 'path';
-// import co from 'co';
-import rsvp from 'rsvp';
 import Loki from 'lokijs';
 import Notebooks from './notebooks';
 import Notes from './notes';
@@ -70,33 +68,26 @@ export default class Library {
     // Save whole library db to disk
   }
 
-  loadLibraryFromDisk () {
-    //
-    // TODO: REFACTOR THESE TERRIBLE NESTED CALLBACKS
-    //
-    return this.notes.find().then((result) => {
-      // the cache already exists
-      if (result.length) { return rsvp.resolve(); }
+  async loadLibraryFromDisk () {
+    // the cache already exists
+    if ((await this.notes.find()).length) { return null; }
 
-      return this.notebooks._findDisk({ parentNotebookPath: this.rootPath }).then((notebooks) => {
-        let notebookPromises = notebooks.map((notebook) => {
-          return this.notebooks._createDB(notebook).then((dbNotebook) => {
+    // notebooks
+    const notebooks = await this.notebooks._findDisk({ parentNotebookPath: this.rootPath });
+    const notebookPromises = notebooks.map(async notebook => {
+      const dbNotebook = await this.notebooks._createDB(notebook);
 
-            // NOTES
-            return this.notes._findDisk({ notebookPath: notebook.path }).then((notes) => {
-              let notePromises = notes.map((note) => {
-                note.notebookId = dbNotebook.id;
-                return this.notes._createDB(note);
-              });
-
-              return rsvp.all(notePromises);
-            });
-          });
-        });
-
-        return rsvp.all(notebookPromises);
+      // notes
+      const notes = await this.notes._findDisk({ notebookPath: notebook.path });
+      let notePromises = notes.map(note => {
+        note.notebookId = dbNotebook.id;
+        return this.notes._createDB(note);
       });
+
+      return Promise.all(notePromises);
     });
+
+    return Promise.all(notebookPromises);
   }
 
   sync () {
