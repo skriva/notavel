@@ -109,8 +109,8 @@ export default class Note {
 
     // saves file in the disk
     return promises.then(() => {
-      const filename = path.join(notebookPath, note.name);
-      return denodeify(fs.writeFile).call(fs, filename, note.content);
+      note.filename = path.join(notebookPath, note.name);
+      return denodeify(fs.writeFile).call(fs, note.filename, note.content);
     });
   }
 
