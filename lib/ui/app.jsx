@@ -108,6 +108,8 @@ const Application = React.createClass({
         this.library.findNotes();
       });
     });
+
+    document.getElementById('loading').remove();
   },
 
   componentDidUpdate: function () {
